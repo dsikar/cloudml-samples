@@ -47,4 +47,4 @@ def splitCoastlineData(filepath):
     eval_file.close()
     train_file.close()
 
-splitData("labeled_images.csv")
+splitCoastlineData("labeled_images.csv")

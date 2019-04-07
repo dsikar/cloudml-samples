@@ -33,6 +33,18 @@ echo
 echo "Using job id: " $JOB_ID
 set -v -e
 
+echo
+echo "Creating evaluation and training sets"
+
+# make local copy
+gsutil cp gs://tamucc_coastline/labeled_images.csv .
+# process
+python eval_train.py
+# copy evaluation and training sets to bucket
+gsutil cp *_set.csv ${BUCKET}
+# cleanup
+rm *.csv
+
 # Takes about 30 mins to preprocess everything.  We serialize the two
 # preprocess.py synchronous calls just for shell scripting ease; you could use
 # --runner DataflowRunner to run them asynchronously.  Typically,

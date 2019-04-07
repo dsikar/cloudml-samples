@@ -10,7 +10,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# TODO change flowers - 2 occurences
 r"""Example dataflow pipeline for preparing image training data.
 
 The tool requires two main input files:
@@ -112,6 +111,7 @@ class Default(object):
   # Make sure to update the default checkpoint file if using another
   # inception graph or when a newer checkpoint file is available. See
   # https://research.googleblog.com/2016/08/improving-inception-and-image.html
+  # We'll use the same inception model for now
   IMAGE_GRAPH_CHECKPOINT_URI = (
       'gs://cloud-ml-data/img/flower_photos/inception_v3_2016_08_28.ckpt')
 
@@ -422,7 +422,7 @@ def default_args(argv):
   parser.add_argument(
       '--job_name',
       type=str,
-      default='flowers-' + datetime.datetime.now().strftime('%Y%m%d-%H%M%S'),
+      default='coastliness-' + datetime.datetime.now().strftime('%Y%m%d-%H%M%S'),
       help='A unique job identifier.')
   parser.add_argument(
       '--num_workers', default=20, type=int, help='The number of workers.')

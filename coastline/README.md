@@ -1,3 +1,16 @@
+# Quickstart
+Requirements:
+* Goggle Cloud account with billing enabled
+* One registered project
+* Dataflow, Computed Engine and Machine Learning Engine APIs enabled
+* One bucket named after your project
+You this is not the case, best to continue reading. Otherwise, go to Google Cloud Console, open a cloud shell and type:
+```
+$ git clone https://github.com/dsikar/cloudml-samples.git
+$ cd cloudml-samples/coastline
+$ . samples.sh
+```
+
 # Overview
 This code uses the [Coastline](https://codelabs.developers.google.com/codelabs/scd-coastline/index.html?index=..%2F..cloud-quest-scientific-data#0) dataset and is based on the [Flowers](https://github.com/GoogleCloudPlatform/cloudml-samples/tree/master/flowers) example i.e. implements image-based transfer learning on Cloud ML
 In this tutorial you will walk through and results you will monitor consist of four parts: data preprocessing, model training with the transformed data,
@@ -94,7 +107,7 @@ preprocess.py synchronous calls just for shell scripting ease; you could use
 `--runner DataflowRunner` to run them asynchronously.  Typically,
 the total worker time is higher when running on Cloud instead of your local
 machine due to increased network traffic and the use of more cost efficient
-CPU's.  Check progress [here](https://console.cloud.google.com/dataflow)
+CPU's.  Progress can be monitored on the [Dataflow Console] (https://console.cloud.google.com/dataflow)
 
 Pre-process training
 
@@ -116,8 +129,7 @@ python trainer/preprocess.py \
   --cloud
 ```
 
-  
-
+At this stage outputs would have been generated and will be visible in the [Storage Console](https://console.cloud.google.com/storage/browser)
 # Training
 
 * **Google Cloud ML Engine**

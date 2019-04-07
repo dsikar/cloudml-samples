@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Flowers Sample Cloud Runner."""
+"""Coastlines Sample Cloud Runner."""
 
 from __future__ import print_function
 import argparse
@@ -32,16 +32,15 @@ from tensorflow.python.lib.io import file_io
 from tensorflow.python.framework import errors
 
 import trainer.preprocess as preprocess_lib
-# TODO change flower refs - 6 occurences
 # Model variables
-MODEL_NAME = 'flowers'
+MODEL_NAME = 'coastlines'
 TRAINER_NAME = 'trainer-0.1.tar.gz'
 METADATA_FILE_NAME = 'metadata.json'
 EXPORT_SUBDIRECTORY = 'model'
 CONFIG_FILE_NAME = 'config.yaml'
 MODULE_NAME = 'trainer.task'
 SAMPLE_IMAGE = \
-  'gs://cloud-ml-data/img/flower_photos/tulips/4520577328_a94c11e806_n.jpg'
+  'gs://tamucc_coastline/esi_images/IMG_0001_SecBC_Spr12.jpg'
 
 # Number of seconds to wait before sending next online prediction after
 # an online prediction fails due to model deployment not being complete.
@@ -55,7 +54,7 @@ def process_args():
   """
 
   parser = argparse.ArgumentParser(
-      description='Runs Flowers Sample E2E pipeline.')
+      description='Runs Coastlines Sample E2E pipeline.')
   parser.add_argument(
       '--project',
       default=None,
@@ -83,9 +82,9 @@ def process_args():
       'Each line of the file stores one label.')
   parser.add_argument(
       '--deploy_model_name',
-      default='flowerse2e',
+      default='coastlinese2e',
       help=('If --cloud is used, the model is deployed with this '
-            'name. The default is flowerse2e.'))
+            'name. The default is coastlinese2e.'))
   parser.add_argument(
       '--dataflow_sdk_path',
       default=None,
@@ -144,8 +143,8 @@ def process_args():
   return args
 
 
-class FlowersE2E(object):
-  """The end-2-end pipeline for Flowers Sample."""
+class CoastlinesE2E(object):
+  """The end-2-end pipeline for Coastlines Sample."""
 
   def  __init__(self, args=None):
     if not args:
@@ -209,9 +208,9 @@ class FlowersE2E(object):
                  its labels in each line.
       output_prefix:  Output prefix to write results to.
       dataflow_sdk_location: path to Dataflow SDK package.
-      trainer_uri: Path to the Flower's trainer package.
+      trainer_uri: Path to the Coastline's trainer package.
     """
-    job_name = ('cloud-ml-sample-flowers-' +
+    job_name = ('cloud-ml-sample-coastlines-' +
                 datetime.datetime.now().strftime('%Y%m%d%H%M%S')  +
                 '-' + dataset_name)
 
@@ -256,7 +255,7 @@ class FlowersE2E(object):
     ]
 
     if self.args.cloud:
-      job_name = 'flowers_model' + datetime.datetime.now().strftime(
+      job_name = 'coastlines_model' + datetime.datetime.now().strftime(
           '_%y%m%d_%H%M%S')
       command = [
           'gcloud', 'ml-engine', 'jobs', 'submit', 'training', job_name,
@@ -409,7 +408,7 @@ def get_cloud_project():
 
 
 def main():
-  pipeline = FlowersE2E()
+  pipeline = CoastlinesE2E()
   pipeline.run()
 
 if __name__ == '__main__':

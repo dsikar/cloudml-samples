@@ -1,7 +1,7 @@
 # Coastline data - munge data to fit into flowers tensorflow example model i.e.
 # split into eval_set.csv (10%) and train_set.csv(90%)
-# NB Example runs Python 2.7 so any uncommented print debugs will not work
-# 1. Load lines into array
+# NB Python 2.7 is current version in shell so any uncommented print debugs will not work
+
 def splitCoastlineData(filepath):
     # expected format:
     # gs://tamucc_coastline/esi_images/IMG_3059_SecDE_Spr12.jpg,9,Sheltered tidal flats

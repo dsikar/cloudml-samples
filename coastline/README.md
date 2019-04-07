@@ -1,5 +1,5 @@
 # Overview
-This code uses the (Coastline)[https://codelabs.developers.google.com/codelabs/scd-coastline/index.html?index=..%2F..cloud-quest-scientific-data#0] dataset and is based on the (Flowers)[https://github.com/GoogleCloudPlatform/cloudml-samples/tree/master/flowers] example i.e. implements image-based transfer learning on Cloud ML
+This code uses the [Coastline](https://codelabs.developers.google.com/codelabs/scd-coastline/index.html?index=..%2F..cloud-quest-scientific-data#0) dataset and is based on the [Flowers](https://github.com/GoogleCloudPlatform/cloudml-samples/tree/master/flowers) example i.e. implements image-based transfer learning on Cloud ML
 In this tutorial you will walk through and results you will monitor consist of four parts: data preprocessing, model training with the transformed data,
 model deployment, and prediction request steps. All parts will be completed in the cloud.
 

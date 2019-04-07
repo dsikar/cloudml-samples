@@ -11,8 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# TODO change flowers - 2 occurences
-"""Flowers classification model."""
+"""Coastlines classification model."""
 
 import enum
 import logging
@@ -89,7 +88,7 @@ class GraphReferences(object):
 
 
 class Model(object):
-  """TensorFlow model for the flowers problem."""
+  """TensorFlow model for the coastlines problem."""
 
   def __init__(self, label_count, dropout, inception_checkpoint_file):
     self.label_count = label_count

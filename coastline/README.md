@@ -1,12 +1,12 @@
 # Overview
-This code is based on the [flowers)[https://github.com/dsikar/cloudml-samples/tree/master/flowers] example i.e. implements image-based transfer learning on Cloud ML
+This code uses the [Coastline](https://codelabs.developers.google.com/codelabs/scd-coastline/index.html?index=..%2F..cloud-quest-scientific-data#0) dataset and is based on the [Flowers](https://github.com/GoogleCloudPlatform/cloudml-samples/tree/master/flowers) example i.e. implements image-based transfer learning on Cloud ML
 In this tutorial you will walk through and results you will monitor consist of four parts: data preprocessing, model training with the transformed data,
 model deployment, and prediction request steps. All parts will be completed in the cloud.
 
 #
 * **Data description**
 
-This tutorial uses the Coastline dataset accessible via Google Cloud public bucket gs://tamucc_coastline/ and can be accessed via cloud shell:
+The Coastline dataset is accessible via Google Cloud public bucket gs://tamucc_coastline/ and cloud shell:
 ```
 $ gsutil ls gs://tamucc_coastline/
 gs://tamucc_coastline/GooglePermissionForImages_20170119.pdf
@@ -87,7 +87,6 @@ gsutil cp *_set.csv ${BUCKET}
 # cleanup
 rm *.csv
 ```
-* 
 * **Use DataFlow to preprocess dataset**
 
 Takes about 30 mins to preprocess everything.  We serialize the two
@@ -194,6 +193,8 @@ You can now send prediction requests to the API. To test this out you can use th
 Download a daisy so we can test online predictions.
 ```
 # TODO ADD DATALAB METHOD (ARRAY INTERATION)
+# See https://github.com/GoogleCloudPlatform/training-data-analyst/blob/master/quests/scientific/coastline.ipynb
+# Section - Deploy and predict model
 gsutil cp \
   gs://tamucc_coastline/esi_images/IMG_0001_SecBC_Spr12.jpg \
   IMG_0001_SecBC_Spr12.jpg

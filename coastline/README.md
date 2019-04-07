@@ -1,13 +1,25 @@
 # Overview
-This code implements image-based transfer learning on Cloud ML
+This code is based on the [flowers)[https://github.com/dsikar/cloudml-samples/tree/master/flowers] example i.e. implements image-based transfer learning on Cloud ML
 In this tutorial you will walk through and results you will monitor consist of four parts: data preprocessing, model training with the transformed data,
 model deployment, and prediction request steps. All parts will be completed in the cloud.
 
 #
 * **Data description**
 
-This tutorial uses the Flowers [dataset](https://storage.cloud.google.com/cloud-ml-data/img/flower_photos/all_data.csv) to build a customized image classification model via transfer learning and the existent [Inception-v3 model](https://www.tensorflow.org/tutorials/image_recognition) 
-in order to correctly label different types of flowers using Cloud Machine Learning Engine.
+This tutorial uses the Coastline dataset accessible via Google Cloud public bucket gs://tamucc_coastline/ and can be accessed via cloud shell:
+```
+$ gsutil ls gs://tamucc_coastline/
+gs://tamucc_coastline/GooglePermissionForImages_20170119.pdf
+gs://tamucc_coastline/dict.txt
+gs://tamucc_coastline/dict_explanation.csv
+gs://tamucc_coastline/esi_images.zip
+gs://tamucc_coastline/labeled_images.csv
+gs://tamucc_coastline/labels.csv
+gs://tamucc_coastline/esi_images/
+```
+to build a customized image classification model via transfer learning and the existent [Inception-v3 model](https://www.tensorflow.org/tutorials/image_recognition) 
+in order to correctly label different types of coastlines using Cloud Machine Learning Engine.  
+To adapt data to existing code, file gs://tamucc_coastline/labeled_images.csv must be split into evaluation (10%) and training (90%) sets, then stored to a user created cloud bucket. All references to evaluation and training sets are modified, as well as references to dict.txt (label ground truth file for categorical classification) and example image to be tested. In addition, all references to *flower* are changed to *coastline* which is partly cosmetic and partly to avoid model naming clashes that could happen if flowers example is run in the same context.
 
 * **Disclaimer**
 
@@ -46,25 +58,36 @@ Install the python dependencies. `pip install --upgrade -r requirements.txt`
 
 Follow [this](https://cloud.google.com/ml-engine/docs/tensorflow/packaging-trainer#project-structure) guide to structure your training application.
 
-
-
 # Data processing
 
 You will run sample code in order to preprocess data with Cloud Dataflow and then use that transformed data to train a model with Cloud ML Engine. You will then deploy the trained model to Cloud ML Engine and test the model by sending a prediction request to it.
 
-In this sample dataset you only have a small set of images (~3,600). Without more data it isn’t possible to use machine learning techniques to adequately train an accurate classification model from scratch. Instead, you’ll use an approach called transfer learning. In transfer learning you use a pre-trained model to extract image features that you will use to train a new classifier. In this tutorial in particular you’ll use a pre-trained model called Inception.
+In this sample dataset you only have a small set of images (~10,533). Without more data it isn’t possible to use machine learning techniques to adequately train an accurate classification model from scratch. Instead, you’ll use an approach called transfer learning. In transfer learning you use a pre-trained model to extract image features that you will use to train a new classifier. In this tutorial in particular you’ll use a pre-trained model called Inception.
 
 ```
 export PROJECT=$(gcloud config list project --format "value(core.project)")
-export JOB_ID="flowers_${USER}_$(date +%Y%m%d_%H%M%S)"
+export JOB_ID="coastlines_${USER}_$(date +%Y%m%d_%H%M%S)"
 export BUCKET="gs://${PROJECT}-ml"
 export GCS_PATH="${BUCKET}/${USER}/${JOB_ID}"
-export DICT_FILE=gs://cloud-samples-data/ml-engine/flowers/dict.txt
+export DICT_FILE=gs://tamucc_coastline/dict.txt
 
-export MODEL_NAME=flowers
+export MODEL_NAME=coastlines
 export VERSION_NAME=v1
 ```
 
+For the coastline example we need to make a local copy of labeled_images.csv, create evaluation and training sets and copy to bucket. 
+
+```
+# make local copy
+gstutil cp gs://tamucc_coastline/labeled_images.csv .
+# process
+python eval_train.py
+# copy evaluation and training sets to bucket
+gsutil cp *_set.csv ${BUCKET}
+# cleanup
+rm *.csv
+```
+* 
 * **Use DataFlow to preprocess dataset**
 
 Takes about 30 mins to preprocess everything.  We serialize the two
@@ -79,7 +102,7 @@ Pre-process training
 ```
 python trainer/preprocess.py \
   --input_dict "$DICT_FILE" \
-  --input_path "gs://cloud-samples-data/ml-engine/flowers/train_set.csv" \
+  --input_path "gs://${PROJECT}-ml/train_set.csv" \
   --output_path "${GCS_PATH}/preproc/train" \
   --cloud
 ```  
@@ -89,7 +112,7 @@ Pre-process evaluation
 ```
 python trainer/preprocess.py \
   --input_dict "$DICT_FILE" \
-  --input_path "gs://cloud-samples-data/ml-engine/flowers/eval_set.csv" \
+  --input_path "gs://${PROJECT}-ml/eval_set.csv" \
   --output_path "${GCS_PATH}/preproc/eval" \
   --cloud
 ```
@@ -170,15 +193,16 @@ You can now send prediction requests to the API. To test this out you can use th
 
 Download a daisy so we can test online predictions.
 ```
+# TODO ADD DATALAB METHOD (ARRAY INTERATION)
 gsutil cp \
-  gs://cloud-samples-data/ml-engine/flowers/daisy/100080576_f52e8ee070_n.jpg \
-  daisy.jpg
+  gs://tamucc_coastline/esi_images/IMG_0001_SecBC_Spr12.jpg \
+  IMG_0001_SecBC_Spr12.jpg
 ```
 
 Since the image is passed via JSON, we have to encode the JPEG string first.
 
 ```
-python -c 'import base64, sys, json; img = base64.b64encode(open(sys.argv[1], "rb").read()); print json.dumps({"key":"0", "image_bytes": {"b64": img}})' daisy.jpg &> request.json
+python -c 'import base64, sys, json; img = base64.b64encode(open(sys.argv[1], "rb").read()); print json.dumps({"key":"0", "image_bytes": {"b64": img}})' IMG_0001_SecBC_Spr12.jpg &> request.json
 ```
 
 Test online prediction

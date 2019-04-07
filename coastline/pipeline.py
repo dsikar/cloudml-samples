@@ -32,7 +32,7 @@ from tensorflow.python.lib.io import file_io
 from tensorflow.python.framework import errors
 
 import trainer.preprocess as preprocess_lib
-
+# TODO change flower refs - 6 occurences
 # Model variables
 MODEL_NAME = 'flowers'
 TRAINER_NAME = 'trainer-0.1.tar.gz'

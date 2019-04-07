@@ -19,11 +19,13 @@
 
 # Now that we are set up, we can start processing some flowers images.
 declare -r PROJECT=$(gcloud config list project --format "value(core.project)")
+# TODO change to coastline
 declare -r JOB_ID="flowers_${USER}_$(date +%Y%m%d_%H%M%S)"
 declare -r BUCKET="gs://${PROJECT}-ml"
 declare -r GCS_PATH="${BUCKET}/${USER}/${JOB_ID}"
+# TODO change to coastline dict
 declare -r DICT_FILE=gs://cloud-samples-data/ml-engine/flowers/dict.txt
-
+# TODO change to coastline
 declare -r MODEL_NAME=flowers
 declare -r VERSION_NAME=v1
 
@@ -37,12 +39,13 @@ set -v -e
 # the total worker time is higher when running on Cloud instead of your local
 # machine due to increased network traffic and the use of more cost efficient
 # CPU's.  Check progress here: https://console.cloud.google.com/dataflow
+# TODO change to coastline eval set
 python trainer/preprocess.py \
   --input_dict "$DICT_FILE" \
   --input_path "gs://cloud-samples-data/ml-engine/flowers/eval_set.csv" \
   --output_path "${GCS_PATH}/preproc/eval" \
   --cloud
-
+# TODO change to coastline train set
 python trainer/preprocess.py \
   --input_dict "$DICT_FILE" \
   --input_path "gs://cloud-samples-data/ml-engine/flowers/train_set.csv" \
@@ -86,10 +89,11 @@ gcloud ml-engine versions create "$VERSION_NAME" \
 gcloud ml-engine versions set-default "$VERSION_NAME" --model "$MODEL_NAME"
 
 # Finally, download a daisy and so we can test online prediction.
+# TODO use coastline image
 gsutil cp \
   gs://cloud-samples-data/ml-engine/flowers/daisy/100080576_f52e8ee070_n.jpg \
   daisy.jpg
-
+# TODO use coastline image
 # Since the image is passed via JSON, we have to encode the JPEG string first.
 python -c 'import base64, sys, json; img = base64.b64encode(open(sys.argv[1], "rb").read()); print json.dumps({"key":"0", "image_bytes": {"b64": img}})' daisy.jpg &> request.json
 

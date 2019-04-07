@@ -34,6 +34,7 @@ import tensorflow as tf
 from tensorflow.python.lib.io import file_io
 
 # Path to a default checkpoint file for the Inception graph.
+# TODO - check if we are using same inception checkpoint
 DEFAULT_INCEPTION_CHECKPOINT = (
     'gs://cloud-samples-data/ml-engine/flowers/inception_v3_2016_08_28.ckpt')
 

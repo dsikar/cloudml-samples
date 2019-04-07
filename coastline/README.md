@@ -87,7 +87,6 @@ gsutil cp *_set.csv ${BUCKET}
 # cleanup
 rm *.csv
 ```
-* 
 * **Use DataFlow to preprocess dataset**
 
 Takes about 30 mins to preprocess everything.  We serialize the two

@@ -547,7 +547,10 @@ if __name__ == '__main__':
   parser.add_argument(
     '--label_count',
     type=int,
-    default=5)
+    default=5,
+    help='Then number of classes in your data. '
+         'This is tipically line count in your '
+         'dict.txt file.')
   parser.add_argument(
     '--dropout',
     type=float,

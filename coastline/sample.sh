@@ -19,16 +19,16 @@
 
 # Now that we are set up, we can start processing some coastline images.
 declare -r PROJECT=$(gcloud config list project --format "value(core.project)")
-# TODO change to coastline
 declare -r JOB_ID="coastlines_${USER}_$(date +%Y%m%d_%H%M%S)"
-declare -r BUCKET="gs://${PROJECT}-ml"
+declare -r BUCKET="gs://${PROJECT}-ml-coastline-1"
 declare -r GCS_PATH="${BUCKET}/${USER}/${JOB_ID}"
-# TODO change to coastline dict
 declare -r DICT_FILE=gs://tamucc_coastline/dict.txt
-# TODO change to coastline
 declare -r MODEL_NAME=coastlines
-declare -r VERSION_NAME=v1
+declare -r VERSION_NAME=v2
 
+echo
+echo "Creating bucket"
+gsutil mb ${BUCKET}
 echo
 echo "Using job id: " $JOB_ID
 set -v -e
@@ -38,7 +38,13 @@ echo "Creating evaluation and training sets"
 
 # make local copy
 gsutil cp gs://tamucc_coastline/labeled_images.csv .
-# process
+# get image list
+gsutil ls gs://tamucc_coastline/esi_images/ > image_list.txt
+# fix extensions
+python fix_extension_case.py
+# rename
+mv labeled_images_fixed.csv labeled_images.csv
+# split into evaluation and training sets
 python eval_train.py
 # copy evaluation and training sets to bucket
 gsutil cp *_set.csv ${BUCKET}
@@ -51,13 +57,11 @@ rm *.csv
 # the total worker time is higher when running on Cloud instead of your local
 # machine due to increased network traffic and the use of more cost efficient
 # CPU's.  Check progress here: https://console.cloud.google.com/dataflow
-# TODO change to coastline eval set
 python trainer/preprocess.py \
   --input_dict "$DICT_FILE" \
   --input_path "gs://${PROJECT}-ml/eval_set.csv" \
   --output_path "${GCS_PATH}/preproc/eval" \
   --cloud
-# TODO change to coastline train set
 python trainer/preprocess.py \
   --input_dict "$DICT_FILE" \
   --input_path "gs://${PROJECT}-ml/train_set.csv" \
@@ -76,7 +80,10 @@ gcloud ml-engine jobs submit training "$JOB_ID" \
   -- \
   --output_path "${GCS_PATH}/training" \
   --eval_data_paths "${GCS_PATH}/preproc/eval*" \
-  --train_data_paths "${GCS_PATH}/preproc/train*"
+  --train_data_paths "${GCS_PATH}/preproc/train*" \
+  --label_count=18 \
+  --dropout=0.5 \
+  --batch_size=100
 
 # Remove the model and its version
 # Make sure no error is reported if model does not exist
@@ -101,11 +108,9 @@ gcloud ml-engine versions create "$VERSION_NAME" \
 gcloud ml-engine versions set-default "$VERSION_NAME" --model "$MODEL_NAME"
 
 # Finally, download a daisy and so we can test online prediction.
-# TODO use coastline image
 gsutil cp \
   gs://tamucc_coastline/esi_images/IMG_0001_SecBC_Spr12.jpg \
   IMG_0001_SecBC_Spr12.jpg
-# TODO use coastline image
 # Since the image is passed via JSON, we have to encode the JPEG string first.
 python -c 'import base64, sys, json; img = base64.b64encode(open(sys.argv[1], "rb").read()); print json.dumps({"key":"0", "image_bytes": {"b64": img}})' IMG_0001_SecBC_Spr12.jpg &> request.json
 
@@ -113,6 +118,6 @@ python -c 'import base64, sys, json; img = base64.b64encode(open(sys.argv[1], "r
 # If the first call returns an error please give it another try; likely the
 # first worker is still spinning up.  After deploying our model we give the
 # service a moment to catch up--only needed when you deploy a new version.
-# We wait for 10 minutes here, but often see the service start up sooner.
-sleep 10m
+# We wait for 1 minute here, but often see the service start up sooner.
+sleep 1m
 gcloud ml-engine predict --model ${MODEL_NAME} --json-instances request.json

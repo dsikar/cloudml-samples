@@ -20,7 +20,7 @@
 # Now that we are set up, we can start processing some coastline images.
 declare -r PROJECT=$(gcloud config list project --format "value(core.project)")
 declare -r JOB_ID="coastlines_${USER}_$(date +%Y%m%d_%H%M%S)"
-declare -r BUCKET="gs://${PROJECT}-ml-coastline-1"
+declare -r BUCKET="gs://${PROJECT}-ml"
 declare -r GCS_PATH="${BUCKET}/${USER}/${JOB_ID}"
 declare -r DICT_FILE=gs://tamucc_coastline/dict.txt
 declare -r MODEL_NAME=coastlines
@@ -29,6 +29,7 @@ declare -r VERSION_NAME=v2
 echo
 echo "Creating bucket"
 gsutil mb ${BUCKET}
+
 echo
 echo "Using job id: " $JOB_ID
 set -v -e
@@ -59,12 +60,12 @@ rm *.csv
 # CPU's.  Check progress here: https://console.cloud.google.com/dataflow
 python trainer/preprocess.py \
   --input_dict "$DICT_FILE" \
-  --input_path "gs://${PROJECT}-ml/eval_set.csv" \
+  --input_path "${BUCKET}/eval_set.csv" \
   --output_path "${GCS_PATH}/preproc/eval" \
   --cloud
 python trainer/preprocess.py \
   --input_dict "$DICT_FILE" \
-  --input_path "gs://${PROJECT}-ml/train_set.csv" \
+  --input_path "${BUCKET}/train_set.csv" \
   --output_path "${GCS_PATH}/preproc/train" \
   --cloud
 

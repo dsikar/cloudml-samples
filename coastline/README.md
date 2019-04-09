@@ -113,7 +113,7 @@ preprocess.py synchronous calls just for shell scripting ease; you could use
 `--runner DataflowRunner` to run them asynchronously.  Typically,
 the total worker time is higher when running on Cloud instead of your local
 machine due to increased network traffic and the use of more cost efficient
-CPU's.  Progress can be monitored on the [Dataflow Console] (https://console.cloud.google.com/dataflow)
+CPU's.  Progress can be monitored on the [Dataflow Console](https://console.cloud.google.com/dataflow)
 
 Pre-process training
 
@@ -135,7 +135,7 @@ python trainer/preprocess.py \
   --cloud
 ```
 
-At this stage outputs would have been generated and will be visible in the [Storage Console] (https://console.cloud.google.com/storage/browser)
+At this stage outputs would have been generated and will be visible in the [Storage Console] (https://console.cloud.google.com/storage/browser).
 
 # Training
 

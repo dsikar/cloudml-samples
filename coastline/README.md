@@ -135,7 +135,8 @@ python trainer/preprocess.py \
   --cloud
 ```
 
-At this stage outputs would have been generated and will be visible in the [Storage Console](https://console.cloud.google.com/storage/browser)
+At this stage outputs would have been generated and will be visible in the [Storage Console] (https://console.cloud.google.com/storage/browser)
+
 # Training
 
 * **Google Cloud ML Engine**

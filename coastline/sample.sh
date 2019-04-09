@@ -126,3 +126,4 @@ gcloud ml-engine predict --model ${MODEL_NAME} --json-instances request.json
 # TODOS
 # 1. Resize downloaded image to comply with size (json requrest)
 # 2. Create background job
+# 3. Run image classification and match to label

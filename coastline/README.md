@@ -88,12 +88,18 @@ export MODEL_NAME=coastlines
 export VERSION_NAME=v1
 ```
 
-For the coastline example we need to make a local copy of labeled_images.csv, create evaluation and training sets and copy to bucket. 
+For the coastline example we need to make a local copy of labeled_images.csv, clean up the extension case (upper or lower case, to match the actual image list on disk, create evaluation and training sets and copy to bucket. 
 
 ```
 # make local copy
-gstutil cp gs://tamucc_coastline/labeled_images.csv .
-# process
+gsutil cp gs://tamucc_coastline/labeled_images.csv .
+# get image list
+gsutil ls gs://tamucc_coastline/esi_images/ > image_list.txt
+# fix extensions
+python fix_extension_case.py
+# rename
+mv labeled_images_fixed.csv labeled_images.csv
+# split into evaluation and training sets
 python eval_train.py
 # copy evaluation and training sets to bucket
 gsutil cp *_set.csv ${BUCKET}
@@ -107,7 +113,7 @@ preprocess.py synchronous calls just for shell scripting ease; you could use
 `--runner DataflowRunner` to run them asynchronously.  Typically,
 the total worker time is higher when running on Cloud instead of your local
 machine due to increased network traffic and the use of more cost efficient
-CPU's.  Progress can be monitored on the [Dataflow Console] (https://console.cloud.google.com/dataflow)
+CPU's.  Progress can be monitored on the [Dataflow Console](https://console.cloud.google.com/dataflow)
 
 Pre-process training
 
@@ -129,7 +135,8 @@ python trainer/preprocess.py \
   --cloud
 ```
 
-At this stage outputs would have been generated and will be visible in the [Storage Console](https://console.cloud.google.com/storage/browser)
+At this stage outputs would have been generated and will be visible in the [Storage Console] (https://console.cloud.google.com/storage/browser).
+
 # Training
 
 * **Google Cloud ML Engine**

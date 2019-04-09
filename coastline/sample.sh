@@ -20,7 +20,7 @@
 # Now that we are set up, we can start processing some coastline images.
 declare -r PROJECT=$(gcloud config list project --format "value(core.project)")
 declare -r JOB_ID="coastlines_${USER}_$(date +%Y%m%d_%H%M%S)"
-declare -r BUCKET="gs://${PROJECT}-ml"
+declare -r BUCKET="gs://${PROJECT}-ml-2"
 declare -r GCS_PATH="${BUCKET}/${USER}/${JOB_ID}"
 declare -r DICT_FILE=gs://tamucc_coastline/dict.txt
 declare -r MODEL_NAME=coastlines
@@ -109,9 +109,10 @@ gcloud ml-engine versions create "$VERSION_NAME" \
 gcloud ml-engine versions set-default "$VERSION_NAME" --model "$MODEL_NAME"
 
 # Finally, download a daisy and so we can test online prediction.
-gsutil cp \
-  gs://tamucc_coastline/esi_images/IMG_0001_SecBC_Spr12.jpg \
-  IMG_0001_SecBC_Spr12.jpg
+#gsutil cp \
+#  gs://tamucc_coastline/esi_images/IMG_0001_SecBC_Spr12.jpg \
+#  IMG_0001_SecBC_Spr12.jpg
+# This file is over the limit ~ 1.5MB so we have pre-processed one
 # Since the image is passed via JSON, we have to encode the JPEG string first.
 python -c 'import base64, sys, json; img = base64.b64encode(open(sys.argv[1], "rb").read()); print json.dumps({"key":"0", "image_bytes": {"b64": img}})' IMG_0001_SecBC_Spr12.jpg &> request.json
 
@@ -122,3 +123,6 @@ python -c 'import base64, sys, json; img = base64.b64encode(open(sys.argv[1], "r
 # We wait for 1 minute here, but often see the service start up sooner.
 sleep 1m
 gcloud ml-engine predict --model ${MODEL_NAME} --json-instances request.json
+# TODOS
+# 1. Resize downloaded image to comply with size (json requrest)
+# 2. Create background job
